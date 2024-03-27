@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/javascript.js" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <title>Masinas Datubazes Menedžeris</title>
+</head>
+<body>
+    <div class="center">
+        <h3>Lietotājs: <span id="username"><%= user %></span> <a href="/users/logout">Iziet no profila</a></h3>
+    </div>
+    <div>
+        <details class="center">
+            <summary class="bigger">Datu ievade</summary>
+            <table class="bigborder">
+                <form id="informacija" method="post">
+                    <tr class="sarkans">
+                    <th>
+                        <div class="padding">
+                            <label for="name">Vārds</label>
+                            <input id="name" name="name" type="text" required>
+                        </div>
+                        </th>
+                        <th>
+                            <div class="padding">
+                            <label for="surname">Uzvārds</label>
+                            <input id="surname" name="surname" type="text" required>
+                            </div>
+                        </th>                
+                    <th>
+                        <div class="padding">
+                            <label for="phone">Telefons</label>
+                            <input id="phone" name="phone" type="text" required>
+                        </div>
+                        </th>
+                        <th>
+                            <div class="padding">
+                                <label for="start_date">Ierašanās datums</label>
+                                <input id="start_date" name="start_date" type="date" required>
+                            </div>
+                        </th>                     
+                    </tr>
+                    <tr class="zils">
+                        <th>
+                            <div class="padding">
+                                <label for="model">Modelis</label>
+                                <input id="model" name="model" type="text" required>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="padding">
+                                <label for="brand">Marka</label>
+                                <input id="brand" name="brand" type="text" required>
+                            </div>
+                        </th>  
+                        <th>
+                            <div class="padding">
+                                <label for="vin">VIN numurs</label>
+                                <input id="vin" name="vin" type="text" required>
+                            </div>
+                        </th>
+                        <th>
+                            <div class="padding">
+                                <label for="license_plate">Mašīnas numurs</label>
+                                <input id="license_plate" name="license_plate" type="text" required>
+                            </div>
+                        </th>                
+                    </tr>
+                    <tr>
+                        <th class="dzeltens" colspan="3">
+                            <div class="padding">
+                            <label for="description">Apraksts</label>
+                            <input id="description" name="description" type="text"required>
+                            </div>
+                        </th>   
+                        <th>
+                            <div class="padding">
+                                <label for="payment_id">Maksājuma ID</label>
+                                <input id="payment_id" name="payment_id" type="number" readonly="true" required>
+                            </div>
+                        </th>            
+                    </tr>
+                    <tr>
+                        <th>
+                            <div><input class="btn btn-primary" id="submitButton" type="submit" value="Pievienot"></div>
+                        </th>
+                        <th>
+                            <div><input class="btn btn-primary" id="changeid" type="button" value="Nomainit Maksājuma ID" onclick="izveidojaunuId()"></div>
+                        </th>
+                    </tr>
+                </form>  
+            </table>
+        </details>
+        <table id="tabula">
+            <thead>
+                <tr>
+                    <th class="tabulasizskats sarkans">Vārds</th>
+                    <th class="tabulasizskats sarkans">Uzvārds</th>
+                    <th class="tabulasizskats sarkans">Telefons</th>
+                    <th class="tabulasizskats sarkans">Ierasanas datums</th>
+                    <th class="tabulasizskats zils">Modelis</th>
+                    <th class="tabulasizskats zils">Marka</th>
+                    <th class="tabulasizskats zils">VIN</th>
+                    <th class="tabulasizskats zils">Mašinas numurs</th>
+                    <th class="tabulasizskats dzeltens">Apraksts</th>
+                    <th class="tabulasizskats">Maksājuma id</th>
+                </tr>
+            </thead>
+                <tbody>
+                    <% rows.forEach(row => { %>
+                        <tr>
+                            <td class="tabulasizskats sarkans"><%=row.name%></td>
+                            <td class="tabulasizskats sarkans"><%=row.surname%></td>
+                            <td class="tabulasizskats sarkans"><%=row.phone%></td>
+                            <td class="tabulasizskats sarkans"><%=row.start_date.toLocaleDateString()%></td>
+                            <td class="tabulasizskats zils"><%=row.model%></td>
+                            <td class="tabulasizskats zils"><%=row.brand%></td>
+                            <td class="tabulasizskats zils"><%=row.vin%></td>
+                            <td class="tabulasizskats zils"><%=row.license_plate%></td>
+                            <td class="tabulasizskats dzeltens"><%=row.description%></td>
+                            <td class="tabulasizskats"><%=row.payment_id%></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+        </table>
+        <br>
+    </div>
+<div class="izveidoja"><div class="izveidoja_teksts">izveidoja Rihards Rauls</div></div>
+</body>
+</html>

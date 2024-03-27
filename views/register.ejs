@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+    <link rel="stylesheet" href="/css/styles2.css">
+    <title>Reģistrēšanās</title>
+</head>
+<body>
+    <div class="center">
+        <h1>Reģistrēšanās</h1>
+        <form action="/users/register" method="POST">
+            <div>
+                <input type="text" id="name" name="name" placeholder="Vārds" required>
+            </div>
+            <div>
+                <input type="text" id="surname" name="surname" placeholder="Uzvārds" required>
+            </div>
+            <div>
+                <input type="email" id="email" name="email" placeholder="E-pasts" required>
+            </div>
+            <div>
+                <input type="password" id="password" name="password" placeholder="Parole" required>
+            </div>
+            <div>
+                <input type="password" id="password2" name="password2" placeholder="Apstiprināt Paroli" required>
+            </div>
+            <div>
+                <input type="submit" value="Reģistrēties">
+            </div>
+            <ul><% if(typeof errors != 'undefined'){ %>
+                    <% errors.forEach(error=>{ %>
+                        <li><%= error.message %></li> %>
+                    <% }) %>
+                <% } %>
+            </ul>
+            <a href="/users/login">Esi jau reģistrējies? Pieslēgšanās šeit</a>
+        </form>
+    </div>
+</body>
+</html>
