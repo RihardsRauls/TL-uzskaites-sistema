@@ -14,35 +14,43 @@
 <body>
     <div class="center">
         <h3>Lietotājs: <span id="username"><%= user %></span> <a href="/users/logout">Iziet no profila</a></h3>
+        <hr style="clear:both;"/>
+    </div>
+    <div>
+        <ul>
+            <% if (messages.error) { %>
+                <li><%= messages.error %></li>
+            <% } %>
+        </ul>
     </div>
     <div>
         <details class="center">
             <summary class="bigger">Datu ievade</summary>
             <table class="bigborder">
-                <form id="informacija" method="post">
+                <form id="informacija" enctype="multipart/form-data" method="post">
                     <tr class="sarkans">
                     <th>
                         <div class="padding">
                             <label for="name">Vārds</label>
-                            <input id="name" name="name" type="text" required>
+                            <input class="full" id="name" name="name" type="text" required>
                         </div>
                         </th>
                         <th>
                             <div class="padding">
                             <label for="surname">Uzvārds</label>
-                            <input id="surname" name="surname" type="text" required>
+                            <input class="full" id="surname" name="surname" type="text" required>
                             </div>
                         </th>                
                     <th>
                         <div class="padding">
                             <label for="phone">Telefons</label>
-                            <input id="phone" name="phone" type="text" required>
+                            <input class="full" id="phone" name="phone" type="text" required>
                         </div>
                         </th>
                         <th>
                             <div class="padding">
                                 <label for="start_date">Ierašanās datums</label>
-                                <input id="start_date" name="start_date" type="date" required>
+                                <input class="full" id="start_date" name="start_date" type="date" required>
                             </div>
                         </th>                     
                     </tr>
@@ -50,48 +58,54 @@
                         <th>
                             <div class="padding">
                                 <label for="model">Modelis</label>
-                                <input id="model" name="model" type="text" required>
+                                <input class="full" id="model" name="model" type="text" required>
                             </div>
                         </th>
                         <th>
                             <div class="padding">
                                 <label for="brand">Marka</label>
-                                <input id="brand" name="brand" type="text" required>
+                                <input class="full" id="brand" name="brand" type="text" required>
                             </div>
                         </th>  
                         <th>
                             <div class="padding">
                                 <label for="vin">VIN numurs</label>
-                                <input id="vin" name="vin" type="text" required>
+                                <input class="full" id="vin" name="vin" type="text" required>
                             </div>
                         </th>
                         <th>
                             <div class="padding">
                                 <label for="license_plate">Mašīnas numurs</label>
-                                <input id="license_plate" name="license_plate" type="text" required>
+                                <input class="full" id="license_plate" name="license_plate" type="text" required>
                             </div>
                         </th>                
                     </tr>
                     <tr>
-                        <th class="dzeltens" colspan="3">
+                        <th class="dzeltens" colspan="2">
                             <div class="padding">
                             <label for="description">Apraksts</label>
-                            <input id="description" name="description" type="text"required>
+                            <input class="full" id="description" name="description" type="text"required>
                             </div>
                         </th>   
+                        <th class="dzeltens" colspan="1">
+                            <div class="padding">
+                                <label for="image">Bilde</label>
+                                <input class="full" id="image" name="image" type="file">
+                            </div>
+                        </th>
                         <th>
                             <div class="padding">
-                                <label for="payment_id">Maksājuma ID</label>
-                                <input id="payment_id" name="payment_id" type="number" readonly="true" required>
+                                <label for="car_id">Mašīnas ID</label>
+                                <input class="full" id="car_id" name="car_id" type="text" readonly="true" required>
                             </div>
                         </th>            
                     </tr>
                     <tr>
                         <th>
-                            <div><input class="btn btn-primary" id="submitButton" type="submit" value="Pievienot"></div>
+                            <div><input class="btn btn-primary full" id="submitButton" type="submit" value="Pievienot"></div>
                         </th>
                         <th>
-                            <div><input class="btn btn-primary" id="changeid" type="button" value="Nomainit Maksājuma ID" onclick="izveidojaunuId()"></div>
+                            <div><input class="btn btn-primary full" id="changeid" type="button" value="Ievadīt Jaunu Mašīnu" onclick="izveidojaunuId()"></div>
                         </th>
                     </tr>
                 </form>  
@@ -108,8 +122,7 @@
                     <th class="tabulasizskats zils">Marka</th>
                     <th class="tabulasizskats zils">VIN</th>
                     <th class="tabulasizskats zils">Mašinas numurs</th>
-                    <th class="tabulasizskats dzeltens">Apraksts</th>
-                    <th class="tabulasizskats">Maksājuma id</th>
+                    <th class="tabulasizskats">Mašīnas id</th>
                 </tr>
             </thead>
                 <tbody>
@@ -123,8 +136,7 @@
                             <td class="tabulasizskats zils"><%=row.brand%></td>
                             <td class="tabulasizskats zils"><%=row.vin%></td>
                             <td class="tabulasizskats zils"><%=row.license_plate%></td>
-                            <td class="tabulasizskats dzeltens"><%=row.description%></td>
-                            <td class="tabulasizskats"><%=row.payment_id%></td>
+                            <td class="tabulasizskats"><a href='/users/view?carid=<%=row.car_id%>'><%=row.car_id%></a></td>
                         </tr>
                     <% }); %>
                 </tbody>

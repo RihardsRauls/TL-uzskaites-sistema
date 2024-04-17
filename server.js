@@ -1,13 +1,42 @@
-// Importing stuff
+// Importing for website
 const express = require('express');
-const app = express();
 const { pool } = require('./dbConfig');
-const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
+//So i can generate random uuids
+const { v4: uuidv4 } = require('uuid');
+//for login
 const passport = require('passport');
 const initializePassport = require('./passportConfig');
-const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcrypt');
+//for images
+const multer = require('multer');
+
+const app = express();
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './public/images/')
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        let ext = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length);
+        cb(null, uniqueSuffix + ext)
+    }
+})
+const imageFilter = function (req, file, cb) {
+    // Accept only image files
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+        req.fileValidationError = 'Only image files are allowed!';
+        return cb(new Error('Only image files are allowed!'), false);
+    }
+    cb(null, true);
+};
+
+// Configure Multer middleware with storage and file filter
+const upload = multer({ 
+    storage: storage,
+    fileFilter: imageFilter
+});
 
 
 const PORT = process.env.PORT || 3000;
@@ -17,7 +46,7 @@ initializePassport(passport);
 // All of the app.use stuff
 app.use(express.static('public'));
 app.use(express.urlencoded({
-    extended: false
+    extended: true
 }));
 app.use(
     session({
@@ -29,9 +58,11 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-//Lai konsolē nerāditos ka meklē šo icon
+//So that the icon error doesnt pop up in console
 app.get('/favicon.ico', (req, res) => res.status(204));
 
+
+//All of the routes and methods
 app.get("/", (req, res) => {
     res.render("index");
 });
@@ -75,9 +106,9 @@ app.post("/users/register", async (req, res) =>{
                 }
                 else{
                     pool.query(
-                        `INSERT INTO users (userid, name, surname, email, password)
-                        VALUES ($1, $2, $3, $4, $5)
-                        RETURNING userid, password`, [uuidv4(), name, surname, email, hashedPassword], (err, results)=>{
+                        `INSERT INTO users (userid, name, surname, email, password, admin)
+                        VALUES ($1, $2, $3, $4, $5, $6)
+                        RETURNING userid, password`, [uuidv4(), name, surname, email, hashedPassword, 'False'], (err, results)=>{
                         if(err){
                             throw err;
                         }
@@ -98,26 +129,37 @@ app.post("/users/login", passport.authenticate('local', {successRedirect: '/user
 
 app.get("/users/dashboard", checkNotAuthenticated , (req, res) =>{
     //console.log(req.user)
-    pool.query(`SELECT * FROM clientcars WHERE userid = $1`, [req.user.userid], (err, results)=>{
+    pool.query(`SELECT * FROM cars WHERE userid = $1`, [req.user.userid], (err, results)=>{
         if(err){
             throw err;
         };
-        console.log(results.rows)
-        if(results.rows.length > 0)
+        //console.log(results.rows)
+        if(results.rows.length > 0){
             res.render("dashboard", { rows: results.rows, user: req.user.name + " " + req.user.surname });
+        }
         else{
             res.render("dashboard", { rows: [], user: req.user.name + " " + req.user.surname });
         }
     });
 });
-app.post("/users/dashboard", (req, res) => {
-    const { name, surname, phone, start_date, model, brand, vin, license_plate, description, payment_id } = req.body;
-    var userid = req.user.userid;
 
-    console.log(userid, name, surname, phone, start_date, model, brand, vin, license_plate, description, payment_id)
+app.post("/users/dashboard", upload.single('image'), (req, res) => {
+    const { name, surname, phone, start_date, model, brand, vin, license_plate, description, car_id} = req.body;
+    const userid = req.user.userid;
 
-    pool.query(`INSERT INTO clientcars (userid, name, surname, phone, start_date, model, brand, vin, license_plate, description, payment_id)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`, [userid, name, surname, phone, start_date, model, brand, vin, license_plate, description, payment_id], (err, results) => {
+    //I wanted to have a solution that makes uses carid as the file name, but i couldnt get it to work
+    //Soo i added another value to the table, for the filename... could probably make it so that it can have multiple paths this way
+    //But i have no idea
+    let filename = 'none.jpg'; // Declare 'filename' variable outside of the if statement
+
+    if (req.file && req.file.filename) { // Check if req.file exists before accessing its properties
+        filename = req.file.filename;
+    }
+
+    //console.log(filename)
+    
+    pool.query(`INSERT INTO cars (userid, name, surname, phone, start_date, model, brand, vin, license_plate, description, active, car_id, filename)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`, [userid, name, surname, phone, start_date, model, brand, vin, license_plate, description, 'True', car_id, filename], (err, results) => {
         if (err) {
             throw err;
         }
@@ -141,6 +183,26 @@ app.get('/users/logout', (req, res) => {
     }
 });
 
+app.get('/users/view', checkNotAuthenticated, (req, res) => {
+
+    pool.query(`SELECT * FROM cars WHERE car_id = $1`, [req.query.carid], (err, results)=>{
+        if(err){
+            throw err;
+        };
+        //console.log(results.rows)
+        if(results.rows.length > 0){
+            //console.log({ rows: results.rows, user: req.user.name + " " + req.user.surname });
+            res.render("view_car", { data: results.rows, user: req.user.name + " " + req.user.surname });
+        }
+        else{
+            res.redirect("/users/dashboard");
+        };
+    });
+});
+
+
+//Middleware that checks if there is a signed in user or not
+
 function checkAuthenticated(req, res, next){
     if (req.isAuthenticated()){
         return res.redirect('/users/dashboard')
@@ -154,6 +216,8 @@ function checkNotAuthenticated(req, res, next){
     }
     res.redirect('/users/login')
 }
+
+//So that the app runs.
 
 app.listen(PORT, ()=>{
     console.log(`Server port ${PORT}`);

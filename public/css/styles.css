@@ -1,29 +1,49 @@
+/* Very cool css file that i have been copying and editing for like 2 years */
+/* ############################  Elements   ############################ */
+
 h2{
     font-style: italic;
     padding-left: 7%;
 }
+
 table{
     width: 100%;
 }
+
 th{
     padding: 4px;
     width: 10%;
 }
-input{
+
+/* ############################  Classes elements   ############################ */
+
+.container img {
+    width: 100%;
+}   
+
+/* ############################  Classes in general   ############################ */
+
+.full{
     width: 100%;
 }
-button{
-    width: 100%;
-}
+
 .center{
     text-align: center;
+    width: auto;
 }
+
+.center_forms{
+    text-align: center;
+}
+
 .bigger{
     font-size: 22px;
 }
+
 .evenbigger{
     font-size: 26px;
 }
+
 .bigborder{
     margin-top: 10px;
     padding-top: 5px;
@@ -34,15 +54,18 @@ button{
     border-top-style: groove;
     border-bottom-style: groove;
 }
+
 .max{
     width: 100%;
     height: 22.5px;
     margin-left: 5px;
     margin-right: 5px;
 }
+
 .padding{
     padding-right: 10px;
 }
+
 .tabulasizskats{
     width: 10%;
     border: 2px;
@@ -51,15 +74,22 @@ button{
     font-weight: bold;
     word-wrap: break-word;
 }
+
 .sarkans{
     background-color: rgba(226, 80, 80, 0.5);
 }
+
 .dzeltens{
     background-color: rgb(226, 226, 80, 0.5);
 }
+
 .zils{
     background-color: rgb(80, 80, 226, 0.5);
 }
+.peleks{
+    background-color: rgba(101, 101, 101, 0.5);
+}
+
 .izveidoja{
     bottom: 0;
     left: 0;
@@ -74,19 +104,37 @@ button{
     position: fixed;
     text-align: right;
 }
+
 .izveidoja_teksts{
     padding-right: 20px;
 }
+
 .title{
     width: 100%;
     overflow: hidden;
     background-color: lightgrey;
     height: 65px;
 }
+
+/* ################################  Id's   ################################ */
+
 #username {
     display: inline; 
     margin-right: 10px;
 }
+
+#car_image{
+
+    border: 3px;
+    border-style: solid;
+
+    width: 500px;
+    height: 500px;
+    object-fit: cover;
+}
+
+/* ############################  No clue lmao   ############################ */
+
 @media print{    
     .no-print, .no-print *
     {

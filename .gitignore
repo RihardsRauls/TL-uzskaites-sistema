@@ -1,3 +1,6 @@
-node_modules
+/node_modules
+/public/images/*
+!public/images/none.jpg
 .env
 notes.txt
+user.txt

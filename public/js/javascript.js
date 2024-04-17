@@ -1,4 +1,4 @@
-var pircejaID = document.getElementById("payment_id");
+var masinasID = document.getElementById("car_id");
 
 function izveidoID() {
 
@@ -15,7 +15,7 @@ function izveidoID() {
 function izveidojaunuId() {
     document.getElementById("informacija").reset();
     var jaunaisId = izveidoID();
-    pircejaID.value = jaunaisId;
+    masinasID.value = jaunaisId;
 }
 
-pircejaID.value = izveidoID();
+masinasID.value = izveidoID();
