@@ -114,7 +114,7 @@ async function createTables() {
                 license_plate TEXT NOT NULL,
                 description TEXT NOT NULL,
                 active TEXT NOT NULL,
-                car_id TEXT NOT NULL,
+                car_id TEXT NOT NULL UNIQUE,
                 filename TEXT NOT NULL
             )
         `);

@@ -99,6 +99,36 @@ app.post(
 
 app.get("/users/dashboard", checkNotAuthenticated , (req, res) =>{
     //console.log(req.user)
+    pool.query(`SELECT * FROM cars WHERE car_id = $1`, [req.query.carid], 
+    (err, results)=>{
+        if(err){
+            throw err;
+        };
+        //console.log(results.rows)
+        if(results.rows.length > 0){
+            edit = results.rows
+        }
+        else{
+            
+
+            edit = [{
+                userid: '',
+                name: '',
+                surname: '',
+                phone: '',
+                start_date: '',
+                model: '',
+                brand: '',
+                vin: '',
+                license_plate: '',
+                description: "",
+                active: '',
+                car_id: uuidv4(),
+                filename: ''
+            }]
+        }
+    });
+
     pool.query(`SELECT * FROM cars WHERE userid = $1`, [req.user.userid], 
     (err, results)=>{
         if(err){
@@ -114,7 +144,8 @@ app.get("/users/dashboard", checkNotAuthenticated , (req, res) =>{
         else{
             res.render("dashboard", { 
                 rows: [], 
-                user: req.user.name + " " + req.user.surname 
+                user: req.user.name + " " + req.user.surname,
+                edit: edit
             });
         };
     });
@@ -148,19 +179,33 @@ app.post("/users/dashboard", upload.single('image'),
         filename = req.file.filename;
     }; // Check if req.file exists before accessing its properties
 
-    //console.log(filename)
+    //console.log(filename)   
     
-    pool.query(`INSERT INTO cars 
-        (   
-            userid, name, 
-            surname, phone, 
-            start_date, model, 
-            brand, vin, 
-            license_plate, description, 
-            active, car_id, 
-            filename
+    pool.query(`INSERT INTO cars (
+        userid, name, 
+        surname, phone, 
+        start_date, model, 
+        brand, vin, 
+        license_plate, description,
+        active, car_id, 
+        filename
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`, 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+    ON CONFLICT (car_id) DO UPDATE
+    SET 
+        userid = EXCLUDED.userid,
+        name = EXCLUDED.name,
+        surname = EXCLUDED.surname,
+        phone = EXCLUDED.phone,
+        start_date = EXCLUDED.start_date,
+        model = EXCLUDED.model,
+        brand = EXCLUDED.brand,
+        vin = EXCLUDED.vin,
+        license_plate = EXCLUDED.license_plate,
+        description = EXCLUDED.description,
+        active = EXCLUDED.active,
+        filename = EXCLUDED.filename;
+        `, 
         [   
             userid, name, 
             surname, phone, 

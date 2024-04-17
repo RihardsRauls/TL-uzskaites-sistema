@@ -12,6 +12,7 @@
     <title>Masinas Datubazes Menedžeris</title>
 </head>
 <body>
+
     <div class="center">
         <h3>Lietotājs: <span id="username"><%= user %></span> <a href="/users/logout">Iziet no profila</a></h3>
         <hr style="clear:both;"/>
@@ -24,7 +25,7 @@
         </ul>
     </div>
     <div>
-        <details class="center">
+        <details open class="center">
             <summary class="bigger">Datu ievade</summary>
             <table class="bigborder">
                 <form id="informacija" enctype="multipart/form-data" method="post">
@@ -32,25 +33,26 @@
                     <th>
                         <div class="padding">
                             <label for="name">Vārds</label>
-                            <input class="full" id="name" name="name" type="text" required>
+                            <input class="full" id="name" name="name" type="text" value="<%=edit[0].name%>" required>
                         </div>
                         </th>
                         <th>
                             <div class="padding">
                             <label for="surname">Uzvārds</label>
-                            <input class="full" id="surname" name="surname" type="text" required>
+                            <input class="full" id="surname" name="surname" type="text" value="<%=edit[0].surname%>" required>
                             </div>
                         </th>                
                     <th>
                         <div class="padding">
                             <label for="phone">Telefons</label>
-                            <input class="full" id="phone" name="phone" type="text" required>
+                            <input class="full" id="phone" name="phone" type="text" value="<%=edit[0].phone%>" required>
                         </div>
                         </th>
                         <th>
                             <div class="padding">
-                                <label for="start_date">Ierašanās datums</label>
-                                <input class="full" id="start_date" name="start_date" type="date" required>
+                                <label for="start_date">Tehniskā apskate</label>
+                                <!-- May god forgive me for my sins, because i have no clue how to make it work in any other way -->
+                                <input class="full" id="start_date" name="start_date" type="date" value="<% if (edit[0].start_date === null || edit[0].start_date === undefined || edit[0].start_date === '') { %><!-- Handle case where start_date is empty or undefined --><% } else { %><%= edit[0].start_date.getFullYear() %>-<%= (edit[0].start_date.getMonth() + 1).toString().padStart(2, '0') %>-<%= edit[0].start_date.getDate().toString().padStart(2, '0') %><% } %>" required>
                             </div>
                         </th>                     
                     </tr>
@@ -58,25 +60,25 @@
                         <th>
                             <div class="padding">
                                 <label for="model">Modelis</label>
-                                <input class="full" id="model" name="model" type="text" required>
+                                <input class="full" id="model" name="model" type="text" value="<%=edit[0].model%>" required>
                             </div>
                         </th>
                         <th>
                             <div class="padding">
                                 <label for="brand">Marka</label>
-                                <input class="full" id="brand" name="brand" type="text" required>
+                                <input class="full" id="brand" name="brand" type="text" value="<%=edit[0].brand%>" required>
                             </div>
                         </th>  
                         <th>
                             <div class="padding">
                                 <label for="vin">VIN numurs</label>
-                                <input class="full" id="vin" name="vin" type="text" required>
+                                <input class="full" id="vin" name="vin" type="text" value="<%=edit[0].vin%>" required>
                             </div>
                         </th>
                         <th>
                             <div class="padding">
                                 <label for="license_plate">Mašīnas numurs</label>
-                                <input class="full" id="license_plate" name="license_plate" type="text" required>
+                                <input class="full" id="license_plate" name="license_plate" type="text" value="<%=edit[0].license_plate%>" required>
                             </div>
                         </th>                
                     </tr>
@@ -84,7 +86,7 @@
                         <th class="dzeltens" colspan="2">
                             <div class="padding">
                             <label for="description">Apraksts</label>
-                            <input class="full" id="description" name="description" type="text"required>
+                            <input class="full" id="description" name="description" type="text" value="<%=edit[0].description%>" required>
                             </div>
                         </th>   
                         <th class="dzeltens" colspan="1">
@@ -93,10 +95,10 @@
                                 <input class="full" id="image" name="image" type="file">
                             </div>
                         </th>
-                        <th>
+                        <th style="display: none;">
                             <div class="padding">
                                 <label for="car_id">Mašīnas ID</label>
-                                <input class="full" id="car_id" name="car_id" type="text" readonly="true" required>
+                                <input class="full" id="car_id" name="car_id" type="text" readonly="true" value="<%=edit[0].car_id%>" required>
                             </div>
                         </th>            
                     </tr>
@@ -105,7 +107,7 @@
                             <div><input class="btn btn-primary full" id="submitButton" type="submit" value="Pievienot"></div>
                         </th>
                         <th>
-                            <div><input class="btn btn-primary full" id="changeid" type="button" value="Ievadīt Jaunu Mašīnu" onclick="izveidojaunuId()"></div>
+                            <div><input class="btn btn-primary full" id="changeid" type="button" value="Ievadīt Jaunu Mašīnu" onclick="window.location.href = '/users/dashboard';"></div>
                         </th>
                     </tr>
                 </form>  
@@ -117,26 +119,28 @@
                     <th class="tabulasizskats sarkans">Vārds</th>
                     <th class="tabulasizskats sarkans">Uzvārds</th>
                     <th class="tabulasizskats sarkans">Telefons</th>
-                    <th class="tabulasizskats sarkans">Ierasanas datums</th>
                     <th class="tabulasizskats zils">Modelis</th>
                     <th class="tabulasizskats zils">Marka</th>
                     <th class="tabulasizskats zils">VIN</th>
                     <th class="tabulasizskats zils">Mašinas numurs</th>
-                    <th class="tabulasizskats">Mašīnas id</th>
+                    <th class="tabulasizskats zils">Tehniskā apskate</th>
+                    <th class="tabulasizskats"></th>
+                    <th class="tabulasizskats"></th>
                 </tr>
             </thead>
                 <tbody>
                     <% rows.forEach(row => { %>
                         <tr>
-                            <td class="tabulasizskats sarkans"><%=row.name%></td>
-                            <td class="tabulasizskats sarkans"><%=row.surname%></td>
-                            <td class="tabulasizskats sarkans"><%=row.phone%></td>
-                            <td class="tabulasizskats sarkans"><%=row.start_date.toLocaleDateString()%></td>
-                            <td class="tabulasizskats zils"><%=row.model%></td>
-                            <td class="tabulasizskats zils"><%=row.brand%></td>
-                            <td class="tabulasizskats zils"><%=row.vin%></td>
-                            <td class="tabulasizskats zils"><%=row.license_plate%></td>
-                            <td class="tabulasizskats"><a href='/users/view?carid=<%=row.car_id%>'><%=row.car_id%></a></td>
+                            <td class="tabulasizskats sarkans center"><%=row.name%></td>
+                            <td class="tabulasizskats sarkans center"><%=row.surname%></td>
+                            <td class="tabulasizskats sarkans center"><%=row.phone%></td>
+                            <td class="tabulasizskats zils center"><%=row.model%></td>
+                            <td class="tabulasizskats zils center"><%=row.brand%></td>
+                            <td class="tabulasizskats zils center"><%=row.vin%></td>
+                            <td class="tabulasizskats zils center"><%=row.license_plate%></td>
+                            <td class="tabulasizskats zils center"><%=row.start_date.toLocaleDateString()%></td>
+                            <td class="tabulasizskats center"><a href='/users/view?carid=<%=row.car_id%>'>Apraksts</a></td>
+                            <td class="tabulasizskats center"><a href="/users/dashboard?carid=<%=row.car_id%>">Rediģēt</a></td>
                         </tr>
                     <% }); %>
                 </tbody>

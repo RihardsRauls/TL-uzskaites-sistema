@@ -1,6 +1,3 @@
 The text document where i keep the stuff that is broken.
 
-    1. Because carid is handled by clientside javascript it can easily be replaced
-    2. 2 cars can have the same carid, only the first car will be used in /view
-
-Probably a lot more stuff is broken, i just dont know.
+    1. Picture gets replaced to default after every update
