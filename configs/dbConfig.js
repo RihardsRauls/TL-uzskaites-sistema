@@ -2,13 +2,20 @@ require('dotenv').config();
 const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
-const connectionString = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
+const user = process.env.DB_USER;
+const password = process.env.DB_PASSWORD;
+const host = process.env.DB_HOST;
+const port = process.env.DB_PORT;
+const database = process.env.DB_DATABASE;
+
+const connectionString = `postgresql://${user}:${password}@${host}:${port}/${database}`;
 const isProduction = process.env.NODE_ENV === "production";
 
 async function createDatabaseIfNotExists() {
     try {
+        
         const pool = new Pool({
-            connectionString: `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}`
+            connectionString: `postgresql://${user}:${password}@${host}:${port}`
         });
 
         const client = await pool.connect();
@@ -16,17 +23,17 @@ async function createDatabaseIfNotExists() {
         // Check if the database already exists
         const result = await client.query(
             "SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = $1)",
-            [process.env.DB_DATABASE]
+            [database]
         );
 
         const databaseExists = result.rows[0].exists;
 
         if (!databaseExists) {
             // Create the database if it doesn't exist
-            await client.query(`CREATE DATABASE ${process.env.DB_DATABASE}`);
-            console.log(`Database '${process.env.DB_DATABASE}' created successfully.`);
+            await client.query(`CREATE DATABASE ${database}`);
+            console.log(`Database '${database}' created successfully.`);
         } else {
-            console.log(`Database '${process.env.DB_DATABASE}' already exists.`);
+            console.log(`Database '${database}' already exists.`);
         }
 
         client.release();
@@ -44,7 +51,7 @@ async function createTables() {
 
     const result = await client.query(
         "SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = $1)",
-        [process.env.DB_DATABASE]
+        [database]
     );
     // console.log(result)
 
@@ -63,7 +70,7 @@ async function createTables() {
 
         console.log(`Table 'users' created or exists.`);
 
-        // Check if the admin user exists
+/*         // Check if the admin user exists
         const adminQueryResult = await client.query(`
             SELECT EXISTS(SELECT 1 FROM users WHERE userid = $1) AS "adminExists"
         `, ['9a87f8e0-a274-4d43-af8e-1b69c66fc9be']);
@@ -72,17 +79,26 @@ async function createTables() {
 
         if (!adminExists) {
             // Insert initial admin user if it doesn't exist
-            hashedPassword = bcrypt.hash(process.env.DB_PASSWORD, 10)
+            hashedPassword = bcrypt.hash(password, 10)
 
             await client.query(`
-                INSERT INTO users (userid, email, name, surname, password, admin)
+                INSERT INTO users 
+                (
+                    userid, email, 
+                    name, surname, 
+                    password, admin
+                )
                 VALUES ($1, $2, $3, $4, $5, $6)
-            `, ['9a87f8e0-a274-4d43-af8e-1b69c66fc9be', 'admin@a.a', 'administrators', process.env.DB_USER, hashedPassword, 'True']);
+            `, [
+                '9a87f8e0-a274-4d43-af8e-1b69c66fc9be', 'admin@a.a', 
+                'administrators', user, 
+                hashedPassword, 'True'
+            ]);
 
             console.log(`Admin user inserted successfully.`);
         } else {
             console.log(`Admin user already exists.`);
-        }
+        } */
 
         // Create cars table if not exists
         await client.query(`

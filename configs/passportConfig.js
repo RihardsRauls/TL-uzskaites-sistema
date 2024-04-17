@@ -23,16 +23,24 @@ function initialize(passport){
                             return done(null, user);
                         }
                         else{
-                            return done(null, false, {message: 'Parole nav pareiza.'})
-                        }
+                            return done(
+                                null, 
+                                false, 
+                                {message: 'Parole nav pareiza.'}
+                                )
+                        };
                     });
                 }
                 else{
-                    return done(null, false, {message: 'Šāds lietotājs nav atrasts.'})
-                }
+                    return done(
+                        null, 
+                        false, 
+                        {message: 'Šāds lietotājs nav atrasts.'}
+                        )
+                };
             }
         );
-    }
+    };
 
     passport.use(
         new LocalStrategy({
@@ -44,7 +52,8 @@ function initialize(passport){
     passport.serializeUser((user, done)=>done(null, user.userid));
     passport.deserializeUser((userid, done)=>{
         pool.query(
-            `SELECT * FROM users WHERE userid = $1`, [userid], (err, results)=>{
+            `SELECT * FROM users WHERE userid = $1`, [userid], 
+            (err, results)=>{
                 if(err){
                     throw err;
                 };
@@ -54,4 +63,4 @@ function initialize(passport){
     });
 };
 
-module.exports = initialize
+module.exports = initialize;
