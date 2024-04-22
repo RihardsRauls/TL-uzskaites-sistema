@@ -14,6 +14,10 @@ app.get("/", (req, res) => {
     res.render("index");
 });
 
+app.get("/help", (req, res) => {
+    res.render("help");
+});
+
 app.get("/users/register", checkAuthenticated , (req, res) =>{
     res.render("register");
 });

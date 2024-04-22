@@ -62,8 +62,12 @@ th{
     margin-right: 5px;
 }
 
-.padding{
+.paddingright{
     padding-right: 10px;
+}
+
+.paddingtop{
+    padding-top: 20px;
 }
 
 .tabulasizskats{
